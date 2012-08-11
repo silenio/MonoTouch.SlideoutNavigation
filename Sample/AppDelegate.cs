@@ -38,7 +38,7 @@ namespace Slideout.Sample
     {
         // class-level declarations
         UIWindow window;
-        SlideoutNavigationController menu;
+        SlideNavigationController menu;
 
         // This is the main entry point of the application.
         static void Main (string[] args)
@@ -58,32 +58,61 @@ namespace Slideout.Sample
         public override bool FinishedLaunching (UIApplication app, NSDictionary options)
         {
             window = new UIWindow (UIScreen.MainScreen.Bounds);
-            menu = new SlideoutNavigationController();
-            menu.TopView = new HomeViewController();
-            menu.MenuView = new DummyController();
 
-            window.RootViewController = menu;
+            slide = new SlideNavigationController();
+            nav = new UINavigationController(new DummyController(slide));
+
+            window.RootViewController = slide;
             window.MakeKeyAndVisible ();
 
+            slide.SetContentController(Awesome());
+
+
             return true;
+        }
+
+        public static SlideNavigationController slide;
+        public static UINavigationController nav;
+        public static UINavigationController Awesome()
+        {
+
+                
+            var d = new UINavigationController();
+            var ctrl = new HomeViewController();
+            ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Bookmarks, (s, e) => { slide.Open(nav, SlideDirection.Right, 256); });
+            d.PushViewController(ctrl, false);
+            return d;
+
         }
     }
 
     public class DummyController : DialogViewController
     {
-        public DummyController() 
-            : base(UITableViewStyle.Plain,new RootElement(""))
+        private SlideNavigationController _ctrl;
+        private bool toggle;
+        public DummyController(SlideNavigationController ctrl) 
+            : base(UITableViewStyle.Plain,new RootElement("Menu"))
         {
+            _ctrl = ctrl;
         }
 
         public override void ViewDidLoad ()
         {
             base.ViewDidLoad ();
 
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => {
+                if (toggle)
+                    _ctrl.MakeMenuFull();
+                else
+                    _ctrl.RestoreMenu();
+                toggle = !toggle;
+            });
+
             Root.Add(new Section() {
-                new StyledStringElement("Home", () => { NavigationController.PushViewController(new HomeViewController(), true); }),
-                new StyledStringElement("About", () => { NavigationController.PushViewController(new AboutViewController(), true); }),
-                new StyledStringElement("Stuff", () => { NavigationController.PushViewController(new StuffViewController(), true); })
+                new StyledStringElement("Home", () => { _ctrl.SetContentController(AppDelegate.Awesome()); }),
+                new StyledStringElement("About", () => { _ctrl.Open(new UINavigationController(new DummyController(_ctrl)), SlideDirection.Up, 256); }),
+                new StyledStringElement("Stuff", () => { _ctrl.Open(new UINavigationController(new DummyController(_ctrl)), SlideDirection.Left, 256); }),
+                new StyledStringElement("Dismiss Content", () => { _ctrl.SetContentController(null); })
             });
         }
     }

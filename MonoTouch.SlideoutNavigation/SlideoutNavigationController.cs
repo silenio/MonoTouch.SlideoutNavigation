@@ -29,6 +29,7 @@ namespace MonoTouch.SlideoutNavigation
     /// <summary>
     /// Slideout view controller.
     /// </summary>
+    [Obsolete("SlideNavigationController should be used!")]
     public class SlideoutNavigationController : UIViewController
     {
         private readonly UIViewController _internalTopView;
