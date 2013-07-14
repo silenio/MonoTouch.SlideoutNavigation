@@ -320,6 +320,18 @@ namespace MonoTouch.SlideoutNavigation
             _shadowShown = false;
         }
 
+        protected virtual void OnWillSlideout()
+        {
+            if (_internalMenuView != null)
+                _internalMenuView.ViewWillAppear(true);
+        }
+
+        protected virtual void OnDidSlideout()
+        {
+            if (_internalMenuView != null)
+                _internalMenuView.ViewDidAppear(true);
+        }
+
         /// <summary>
         /// Show this instance.
         /// </summary>
@@ -333,15 +345,18 @@ namespace MonoTouch.SlideoutNavigation
             //Show some shadow!
             ShowShadow();
 
+            //We're sliding!
+            OnWillSlideout();
+
             UIView view = _internalTopView.View;
-            UIView.Animate(SlideSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
-                           () => { view.Frame = new RectangleF(SlideWidth, 0, view.Frame.Width, view.Frame.Height); },
-                           () =>
-                           {
-                               if (view.Subviews.Length > 0)
-                                   view.Subviews[0].UserInteractionEnabled = false;
-                               view.AddGestureRecognizer(_tapGesture);
-                           });
+            UIView.Animate(SlideSpeed, 0, UIViewAnimationOptions.CurveEaseInOut, () => { 
+                view.Frame = new RectangleF(SlideWidth, 0, view.Frame.Width, view.Frame.Height); 
+            }, () => {
+                if (view.Subviews.Length > 0)
+                    view.Subviews[0].UserInteractionEnabled = false;
+                view.AddGestureRecognizer(_tapGesture);
+                OnDidSlideout();
+            });
         }
 
         /// <summary>
