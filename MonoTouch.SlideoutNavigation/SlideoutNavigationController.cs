@@ -55,7 +55,7 @@ namespace MonoTouch.SlideoutNavigation
             _internalTopView.View.Layer.MasksToBounds = false;
 
             _tapGesture = new UITapGestureRecognizer();
-            _tapGesture.AddTarget(Hide);
+            _tapGesture.AddTarget(() => Hide());
             _tapGesture.NumberOfTapsRequired = 1;
 
             _panGesture = new UIPanGestureRecognizer
