@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 
 namespace MonoTouch.SlideoutNavigation
 {
@@ -334,9 +334,9 @@ namespace MonoTouch.SlideoutNavigation
         {
             base.ViewDidLoad ();
 
-            _internalTopView.View.Frame = new RectangleF (0, 0, View.Frame.Width, View.Frame.Height);
-            _internalMenuViewLeft.View.Frame = new RectangleF (0, 0, SlideWidth, View.Frame.Height);
-            _internalMenuViewRight.View.Frame = new RectangleF (View.Frame.Width - SlideWidth, 0, SlideWidth, View.Frame.Height);
+			_internalTopView.View.Frame = new CoreGraphics.CGRect (0, 0, View.Frame.Width, View.Frame.Height);
+			_internalMenuViewLeft.View.Frame = new CoreGraphics.CGRect (0, 0, SlideWidth, View.Frame.Height);
+			_internalMenuViewRight.View.Frame = new CoreGraphics.CGRect (View.Frame.Width - SlideWidth, 0, SlideWidth, View.Frame.Height);
 
             //Add the list View
             AddChildViewController (_internalMenuViewLeft);
@@ -439,12 +439,12 @@ namespace MonoTouch.SlideoutNavigation
             //Show some shadow!
             ShowShadowLeft ();
 
-            _internalMenuViewLeft.View.Frame = new RectangleF (0, 0, SlideWidth, View.Frame.Height);
+			_internalMenuViewLeft.View.Frame = new CoreGraphics.CGRect (0, 0, SlideWidth, View.Frame.Height);
 
             UIView view = _internalTopView.View;
             UIView.Animate (SlideSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
                            () => {
-                view.Frame = new RectangleF (SlideWidth, 0, view.Frame.Width, view.Frame.Height); },
+					view.Frame = new CoreGraphics.CGRect (SlideWidth, 0, view.Frame.Width, view.Frame.Height); },
                            () =>
             {
                 if (view.Subviews.Length > 0)
@@ -489,12 +489,12 @@ namespace MonoTouch.SlideoutNavigation
 
             ShowShadowRight ();
 
-            _internalMenuViewRight.View.Frame = new RectangleF (View.Frame.Width - SlideWidth, 0, SlideWidth, View.Frame.Height);
+			_internalMenuViewRight.View.Frame = new CoreGraphics.CGRect (View.Frame.Width - SlideWidth, 0, SlideWidth, View.Frame.Height);
 
             UIView view = _internalTopView.View;
             UIView.Animate (SlideSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
                             () => {
-                view.Frame = new RectangleF (-SlideWidth, 0, view.Frame.Width, view.Frame.Height); },
+					view.Frame = new CoreGraphics.CGRect (-SlideWidth, 0, view.Frame.Width, view.Frame.Height); },
                             () => {
                 if (view.Subviews.Length > 0)
                     view.Subviews [0].UserInteractionEnabled = false;
@@ -557,7 +557,7 @@ namespace MonoTouch.SlideoutNavigation
             _internalTopNavigation = new UINavigationController (view) {
                 View =
                                              {
-                                                 Frame = new RectangleF(0, 0,
+					Frame = new CoreGraphics.CGRect(0, 0,
                                                                         _internalTopView.View.Frame.Width,
                                                                         _internalTopView.View.Frame.Height)
                                              }
@@ -575,7 +575,7 @@ namespace MonoTouch.SlideoutNavigation
             Hide ();
         }
 
-        /// <summary>
+        /// <summary>`
         /// Hide the menu's and returns the topview to the center.
         /// </summary>
         public void Hide (bool animate = true)
@@ -587,9 +587,9 @@ namespace MonoTouch.SlideoutNavigation
 
             UIView view = _internalTopView.View;
 
-            NSAction animation = () => {
-                view.Frame = new RectangleF (0, 0, view.Frame.Width, view.Frame.Height); };
-            NSAction finished = () => {
+            Action animation = () => {
+				view.Frame = new CoreGraphics.CGRect (0, 0, view.Frame.Width, view.Frame.Height); };
+            Action finished = () => {
                 if (view.Subviews.Length > 0)
                     view.Subviews [0].UserInteractionEnabled = true;
                 view.RemoveGestureRecognizer (_tapGesture);
